@@ -79,7 +79,10 @@ miscs = [
   f
   for f in file_list
   if os.path.isfile(os.path.join(folder, f))
-  and f not in imgs or f not in audios or f not in videos or f not in docs
+  and isImg(f) == False
+  and isAudio(f) == False
+  and isVideo(f) == False
+  and isDoc(f) == False
 ]
 
 
@@ -101,35 +104,35 @@ for misc in miscs:
 img_list_column = [
     [
         sg.Listbox(
-            values=[imgs], enable_events=True, size=(40, 20), key="-IMGLIST-"
+            values=[], enable_events=True, size=(40, 20), key="-IMGLIST-"
         )
     ],
 ]
 aud_list_column = [
     [
         sg.Listbox(
-            values=[audios], enable_events=True, size=(40, 20), key="-AUDLIST-"
+            values=[], enable_events=True, size=(40, 20), key="-AUDLIST-"
         )
     ],
 ]
 vid_list_column = [
     [
         sg.Listbox(
-            values=[imgs], enable_events=True, size=(40, 20), key="-IMGLIST-"
+            values=[], enable_events=True, size=(40, 20), key="-VIDLIST-"
         )
     ],
 ]
 doc_list_column = [
     [
         sg.Listbox(
-            values=[docs], enable_events=True, size=(40, 20), key="-DOCLIST-"
+            values=[], enable_events=True, size=(40, 20), key="-DOCLIST-"
         )
     ],
 ]
 misc_list_column = [
     [
         sg.Listbox(
-            values=[imgs], enable_events=True, size=(40, 20), key="-IMGLIST-"
+            values=[], enable_events=True, size=(40, 20), key="-MISCLIST-"
         )
     ],
 ]
@@ -147,7 +150,7 @@ aud_viewer_column = [
 vid_viewer_column = [
     [sg.Text("Choose a video file from list on left:")],
     [sg.Text(size=(40, 1), key="-VIDOUT-")],
-    [sg.Image(key="-AUD-")],
+    [sg.Image(key="-VID-")],
 ]
 doc_viewer_column = [
     [sg.Text("Choose a document from list on left:")],
@@ -195,13 +198,19 @@ tabgrp = [[sg.TabGroup([[sg.Tab('Images', imglayout, title_color='Red', border_w
                     sg.Tab('Documents', doclayout, title_color='Blue', border_width =10, background_color='Green', element_justification= 'center'),
                     sg.Tab('Misc', misclayout, title_color='Red', border_width =10, background_color='Green', element_justification= 'center'),]],
 tab_location='centertop', title_color='Red', tab_background_color='Purple',selected_title_color='Green', selected_background_color='Gray', border_width=5),
-                    sg.Button('Close')]]  
+                    sg.Button('Close'),
+                    sg.Button('Refresh')]]  
         
 #Define Window
 sorterwindow =sg.Window("Tabs",tabgrp)
 
-while True:
-  specified = True
+while specified == True:
   event, values = sorterwindow.read()
+  if event == "Refresh":
+    sorterwindow["-IMGLIST-"].update(imgs)
+    sorterwindow["-AUDLIST-"].update(audios)
+    sorterwindow["-VIDLIST-"].update(videos)
+    sorterwindow["-DOCLIST-"].update(docs)
+    sorterwindow["-MISCLIST-"].update(miscs)
   if event == "Close" or event == sg.WIN_CLOSED:
     break
