@@ -87,22 +87,6 @@ miscs = [
   and isDoc(f) == False
 ]
 
-
-for img in imgs:
-  print(img)
-
-for audio in audios:
-  print(audio)
-
-for video in videos:
-  print(video)
-
-for doc in docs:
-  print(doc)
-
-for misc in miscs:
-  print(misc)
-
 img_list_column = [
     [
         sg.Listbox(
