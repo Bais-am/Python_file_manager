@@ -21,64 +21,66 @@ while True:
     specified = True
     break
 
+
 def isImg(str):
   ext = ".png .jpg .jpeg .gif"
-  if any(e in str for e in ext.split()) :
+  if any(e in str.lower() for e in ext.split()) :
     return True
   else: return False
 
 def isAudio(str):
   ext = ".mp3 .m4a"
-  if any(e in str for e in ext.split()) :
+  if any(e in str.lower() for e in ext.split()) :
     return True
   else : return False 
 
 def isVideo(str):
   ext = ".mp4 .avi .3gp"
-  if any(e in str for e in ext.split()):
+  if any(e in str.lower() for e in ext.split()):
     return True
   else: return False
 
 def isDoc(str):
   ext = ".pdf .doc .docx .ppt .pptx .xls .xlsx .xlsm .xlt .xltm .txt"
-  if any(e in str for e in ext.split()) :
+  if any(e in str.lower() for e in ext.split()) :
     return True
   else: return False
 
-try:
-  # Get list of files in folder
-  file_list = os.listdir(folder)
-except:
-  file_list = []
+#os.walk(top, topdown=True, onerror=None, followlinks=False)
 
 imgs = [
   f
+  for p, subdirs, file_list in os.walk(folder)
   for f in file_list
-  if os.path.isfile(os.path.join(folder, f))
+  if os.path.join(p, f)
   and isImg(f)
 ]
 audios = [
   f
+  for p, subdirs, file_list in os.walk(folder)
   for f in file_list
-  if os.path.isfile(os.path.join(folder, f))
+  if os.path.join(p, f)
   and isAudio(f)
 ]
 videos = [
   f
+  for p, subdirs, file_list in os.walk(folder)
   for f in file_list
-  if os.path.isfile(os.path.join(folder, f))
+  if os.path.join(p, f)
   and isVideo(f)
 ]
 docs = [
   f
+  for p, subdirs, file_list in os.walk(folder)
   for f in file_list
-  if os.path.isfile(os.path.join(folder, f))
+  if os.path.join(p, f)
   and isDoc(f)
 ]
 miscs = [
   f
+  for p, subdirs, file_list in os.walk(folder)
   for f in file_list
-  if os.path.isfile(os.path.join(folder, f))
+  if os.path.join(p, f)
   and isImg(f) == False
   and isAudio(f) == False
   and isVideo(f) == False
