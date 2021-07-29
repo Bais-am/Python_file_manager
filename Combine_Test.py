@@ -123,7 +123,7 @@ img_list_column = [
   ],
 ]
 img_btns = [
-  [sg.Button("Copy All"), sg.Button("Move All")],
+  [sg.Button("Copy All", key="-IMGCOPY-"), sg.Button("Move All", key="-IMGMOVE-")],
   [
     sg.Text("Destination"),
     sg.In(size=(25, 1), enable_events=True, key="-IMGOUT-"),
@@ -139,7 +139,7 @@ aud_list_column = [
   ],
 ]
 aud_btns = [
-  [sg.Button("Copy All"), sg.Button("Move All")],
+  [sg.Button("Copy All", key="-AUDCOPY-"), sg.Button("Move All", key="-AUDMOVE-")],
   [
     sg.Text("Destination"),
     sg.In(size=(25, 1), enable_events=True, key="-AUDOUT-"),
@@ -155,7 +155,7 @@ vid_list_column = [
   ],
 ]
 vid_btns = [
-  [sg.Button("Copy All"), sg.Button("Move All")],
+  [sg.Button("Copy All", key="-VIDCOPY-"), sg.Button("Move All", key="-VIDMOVE-")],
   [
     sg.Text("Destination"),
     sg.In(size=(25, 1), enable_events=True, key="-VIDOUT-"),
@@ -171,7 +171,7 @@ doc_list_column = [
   ],
 ]
 doc_btns = [
-  [sg.Button("Copy All"), sg.Button("Move All")],
+  [sg.Button("Copy All", key="-DOCCOPY-"), sg.Button("Move All", key="-DOCMOVE-")],
   [
     sg.Text("Destination"),
     sg.In(size=(25, 1), enable_events=True, key="-DOCOUT-"),
@@ -187,7 +187,7 @@ misc_list_column = [
   ],
 ]
 misc_btns = [
-  [sg.Button("Copy All"), sg.Button("Move All")],
+  [sg.Button("Copy All", key="-MISCCOPY-"), sg.Button("Move All", key="-MISCMOVE-")],
   [
     sg.Text("Destination"),
     sg.In(size=(25, 1), enable_events=True, key="-MISCOUT-"),
@@ -261,7 +261,7 @@ def copy(src, dest): {
   shutil.copy2(src, dest, follow_symlinks=False)
 }
 def move(src, dest): {
-  shutil.move(src, dest, follow_symlinks=False)
+  shutil.move(src, dest)
 }
 
 #Define Window
@@ -275,25 +275,51 @@ while True:
     sorterwindow["-VIDLIST-"].update(vid)
     sorterwindow["-DOCLIST-"].update(docs)
     sorterwindow["-MISCLIST-"].update(miscs)
-  if event == "-IMGOUT-":
+
+  if values["-IMGOUT-"] and event == "-IMGCOPY-":
     imgdst = values["-IMGOUT-"]
     for F in imgsrc:
       copy(F, imgdst)
-  if event == "-AUDOUT-":
+  elif values["-IMGOUT-"] and event == "-IMGMOVE-":
+    imgdst = values["-IMGOUT-"]
+    for F in imgsrc:
+      move(F, imgdst)
+
+  if values["-AUDOUT-"] and event == "-AUDCOPY-":
     auddst = values["-AUDOUT-"]
     for F in audsrc:
       copy(F, auddst)
-  if event == "-VIDOUT-":
+  elif values["-AUDOUT-"] and event == "-AUDMOVE-":
+    auddst = values["-AUDOUT-"]
+    for F in audsrc:
+      move(F, auddst)
+
+  if values["-VIDOUT-"] and event == "-VIDCOPY-":
     viddst = values["-VIDOUT-"]
     for F in vidsrc:
       copy(F, viddst)
-  if event == "-DOCOUT-":
+  elif values["-VIDOUT-"] and event == "-VIDMOVE-":
+    viddst = values["-VIDOUT-"]
+    for F in vidsrc:
+      move(F, viddst)
+
+  if values["-DOCOUT-"] and event == "-DOCCOPY-":
     docdst = values["-DOCOUT-"]
     for F in docsrc:
       copy(F, docdst)
-  if event == "-MISCOUT-":
+  elif values["-DOCOUT-"] and event == "-DOCMOVE-":
+    docdst = values["-DOCOUT-"]
+    for F in docsrc:
+      move(F, docdst)
+
+  if values["-MISCOUT-"] and event == "-MISCCOPY-":
     miscdst = values["-MISCOUT-"]
     for F in miscsrc:
       copy(F, miscdst)
+  elif values["-MISCOUT-"] and event == "-MISCMOVE-":
+    miscdst = values["-MISCOUT-"]
+    for F in miscsrc:
+      move(F, miscdst)
+
   if event == "Close" or event == sg.WIN_CLOSED:
     break
