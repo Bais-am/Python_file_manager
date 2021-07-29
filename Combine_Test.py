@@ -1,5 +1,8 @@
 import PySimpleGUI as sg
 import os 
+import shutil
+
+from PySimpleGUI.PySimpleGUI import Print
 
 folder_select = [
   [
@@ -9,15 +12,13 @@ folder_select = [
   ]
 ]
 
-folderwindow = sg.Window("folder selection", folder_select)
+folderwindow = sg.Window("folder selection", folder_select, auto_close=True)
 
 while True:
   event, values = folderwindow.read()
-  if event == "Exit" or event == sg.WIN_CLOSED:
-    break
   if event == "-FOLDER-":
     folder = values["-FOLDER-"]
-    specified = True
+  if event == "Exit" or event == sg.WIN_CLOSED:
     break
 
 
@@ -45,10 +46,10 @@ def isDoc(str):
     return True
   else: return False
 
-# file_paths = list()
+filesrc = list()
 files = list()
 for dirpath, dirnames, filenames in os.walk(folder, topdown = True):
-  # file_paths += [os.path. join(dirpath, n) for n in filenames]
+  filesrc += [os.path.join(dirpath, n) for n in filenames]
   files += [n for n in filenames]
 
 
@@ -57,21 +58,45 @@ imgs = [
   for f in files
   if isImg(f)
 ]
-audios = [
+imgsrc = [
+  f
+  for f in filesrc
+  if isImg(f)
+]
+
+aud = [
   f
   for f in files
   if isAud(f)
 ]
-videos = [
+audsrc = [
+  f
+  for f in filesrc
+  if isAud(f)
+]
+
+vid = [
   f
   for f in files
   if isVid(f)
 ]
+vidsrc = [
+  f
+  for f in filesrc
+  if isVid(f)
+]
+
 docs = [
   f
   for f in files
   if isDoc(f)
 ]
+docsrc = [
+  f
+  for f in filesrc
+  if isDoc(f)
+]
+
 miscs = [
   f
   for f in files
@@ -80,14 +105,32 @@ miscs = [
   and isVid(f) == False
   and isDoc(f) == False
 ]
+miscsrc = [
+  f
+  for f in filesrc
+  if isImg(f) == False
+  and isAud(f) == False
+  and isVid(f) == False
+  and isDoc(f) == False
+]
+
 
 img_list_column = [
   [
     sg.Listbox(
       values=[], enable_events=True, size=(80, 25), key="-IMGLIST-"
-    )
+    ),
   ],
 ]
+img_btns = [
+  [sg.Button("Copy All"), sg.Button("Move All")],
+  [
+    sg.Text("Destination"),
+    sg.In(size=(25, 1), enable_events=True, key="-IMGOUT-"),
+    sg.FolderBrowse(),
+  ]
+]
+
 aud_list_column = [
   [
     sg.Listbox(
@@ -95,6 +138,15 @@ aud_list_column = [
     )
   ],
 ]
+aud_btns = [
+  [sg.Button("Copy All"), sg.Button("Move All")],
+  [
+    sg.Text("Destination"),
+    sg.In(size=(25, 1), enable_events=True, key="-AUDOUT-"),
+    sg.FolderBrowse(),
+  ]
+]
+
 vid_list_column = [
   [
     sg.Listbox(
@@ -102,6 +154,15 @@ vid_list_column = [
     )
   ],
 ]
+vid_btns = [
+  [sg.Button("Copy All"), sg.Button("Move All")],
+  [
+    sg.Text("Destination"),
+    sg.In(size=(25, 1), enable_events=True, key="-VIDOUT-"),
+    sg.FolderBrowse(),
+  ]
+]
+
 doc_list_column = [
   [
     sg.Listbox(
@@ -109,6 +170,15 @@ doc_list_column = [
     )
   ],
 ]
+doc_btns = [
+  [sg.Button("Copy All"), sg.Button("Move All")],
+  [
+    sg.Text("Destination"),
+    sg.In(size=(25, 1), enable_events=True, key="-DOCOUT-"),
+    sg.FolderBrowse(),
+  ]
+]
+
 misc_list_column = [
   [
     sg.Listbox(
@@ -116,31 +186,44 @@ misc_list_column = [
     )
   ],
 ]
+misc_btns = [
+  [sg.Button("Copy All"), sg.Button("Move All")],
+  [
+    sg.Text("Destination"),
+    sg.In(size=(25, 1), enable_events=True, key="-MISCOUT-"),
+    sg.FolderBrowse(),
+  ]
+]
 
 #INDIVISUAL TAB LAYOUTS
 imglayout = [
   [
     sg.Column(img_list_column),
-  ]
+    sg.Column(img_btns, element_justification='center'),
+  ],
 ]
 audlayout = [
   [
     sg.Column(aud_list_column),
+    sg.Column(aud_btns, element_justification='center'),
   ]
 ]
 vidlayout = [
   [
     sg.Column(vid_list_column),
+    sg.Column(vid_btns, element_justification='center'),
   ]
 ]
 doclayout = [
   [
     sg.Column(doc_list_column),
+    sg.Column(doc_btns, element_justification='center'),
   ]
 ]
 misclayout = [
   [
     sg.Column(misc_list_column),
+    sg.Column(misc_btns, element_justification='center'),
   ]
 ]
 
@@ -167,21 +250,50 @@ tabgrp = [
       ]
     ],
   tab_location='centertop', title_color='#080A0A', tab_background_color='#E13758',selected_title_color='#080A0A', selected_background_color='#2E6A9C'),
+  ],
+  [
   sg.CButton("Quit"),
   sg.Button("Refresh"),
   ],
 ]
 
+def copy(src, dest): {
+  shutil.copy2(src, dest, follow_symlinks=False)
+}
+def move(src, dest): {
+  shutil.move(src, dest, follow_symlinks=False)
+}
+
 #Define Window
 sorterwindow =sg.Window("Tabs",tabgrp)
 
-while specified == True:
+while True:
   event, values = sorterwindow.read()
   if event == "Refresh":
     sorterwindow["-IMGLIST-"].update(imgs)
-    sorterwindow["-AUDLIST-"].update(audios)
-    sorterwindow["-VIDLIST-"].update(videos)
+    sorterwindow["-AUDLIST-"].update(aud)
+    sorterwindow["-VIDLIST-"].update(vid)
     sorterwindow["-DOCLIST-"].update(docs)
     sorterwindow["-MISCLIST-"].update(miscs)
+  if event == "-IMGOUT-":
+    imgdst = values["-IMGOUT-"]
+    for F in imgsrc:
+      copy(F, imgdst)
+  if event == "-AUDOUT-":
+    auddst = values["-AUDOUT-"]
+    for F in audsrc:
+      copy(F, auddst)
+  if event == "-VIDOUT-":
+    viddst = values["-VIDOUT-"]
+    for F in vidsrc:
+      copy(F, viddst)
+  if event == "-DOCOUT-":
+    docdst = values["-DOCOUT-"]
+    for F in docsrc:
+      copy(F, docdst)
+  if event == "-MISCOUT-":
+    miscdst = values["-MISCOUT-"]
+    for F in miscsrc:
+      copy(F, miscdst)
   if event == "Close" or event == sg.WIN_CLOSED:
     break
