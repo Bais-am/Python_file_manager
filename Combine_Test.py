@@ -23,7 +23,7 @@ while True:
 
 
 def isImg(str):
-  ext = ".png .jpg .jpeg .gif .img"
+  ext = ".png .jpg .jpeg .gif .img .webp"
   if any(e in str.lower() for e in ext.split()) :
     return True
   else: return False
@@ -35,7 +35,7 @@ def isAud(str):
   else : return False 
 
 def isVid(str):
-  ext = ".mp4 .avi .3gp .webp .webm .mov .m4v"
+  ext = ".mp4 .avi .3gp .webm .mov .m4v"
   if any(e in str.lower() for e in ext.split()):
     return True
   else: return False
@@ -260,8 +260,8 @@ tabgrp = [
 def copy(src, dest): {
   shutil.copy2(src, dest, follow_symlinks=False)
 }
-def move(src, dest): {
-  shutil.move(src, dest)
+def delete(path): {
+  os.remove(path)
 }
 
 #Define Window
@@ -280,46 +280,51 @@ while True:
     imgdst = values["-IMGOUT-"]
     for F in imgsrc:
       copy(F, imgdst)
-  elif values["-IMGOUT-"] and event == "-IMGMOVE-":
+  if values["-IMGOUT-"] and event == "-IMGMOVE-":
     imgdst = values["-IMGOUT-"]
     for F in imgsrc:
-      move(F, imgdst)
+      copy(F, imgdst)
+      delete(F)
 
   if values["-AUDOUT-"] and event == "-AUDCOPY-":
     auddst = values["-AUDOUT-"]
     for F in audsrc:
       copy(F, auddst)
-  elif values["-AUDOUT-"] and event == "-AUDMOVE-":
+  if values["-AUDOUT-"] and event == "-AUDMOVE-":
     auddst = values["-AUDOUT-"]
     for F in audsrc:
-      move(F, auddst)
+      copy(F, auddst)
+      delete(F)
 
   if values["-VIDOUT-"] and event == "-VIDCOPY-":
     viddst = values["-VIDOUT-"]
     for F in vidsrc:
       copy(F, viddst)
-  elif values["-VIDOUT-"] and event == "-VIDMOVE-":
+  if values["-VIDOUT-"] and event == "-VIDMOVE-":
     viddst = values["-VIDOUT-"]
     for F in vidsrc:
-      move(F, viddst)
+      copy(F, viddst)
+      delete(F)
 
   if values["-DOCOUT-"] and event == "-DOCCOPY-":
     docdst = values["-DOCOUT-"]
     for F in docsrc:
       copy(F, docdst)
-  elif values["-DOCOUT-"] and event == "-DOCMOVE-":
+  if values["-DOCOUT-"] and event == "-DOCMOVE-":
     docdst = values["-DOCOUT-"]
     for F in docsrc:
-      move(F, docdst)
+      copy(F, docdst)
+      delete(F)
 
   if values["-MISCOUT-"] and event == "-MISCCOPY-":
     miscdst = values["-MISCOUT-"]
     for F in miscsrc:
       copy(F, miscdst)
-  elif values["-MISCOUT-"] and event == "-MISCMOVE-":
+  if values["-MISCOUT-"] and event == "-MISCMOVE-":
     miscdst = values["-MISCOUT-"]
     for F in miscsrc:
-      move(F, miscdst)
+      copy(F, miscdst)
+      delete(F)
 
   if event == "Close" or event == sg.WIN_CLOSED:
     break
